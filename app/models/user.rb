@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   #defines who the leaders are
-  has_many :subscriptions, foreign_key :follower_id, dependent: :destroy
+  has_many :subscriptions, foreign_key: :follower_id, dependent: :destroy
   
   has_many :leaders, through: :subscriptions
   
@@ -17,7 +17,13 @@ class User < ActiveRecord::Base
   #define associations for comments
   has_many :comments, dependent: :destroy
   
+  #password security
+  has_secure_password
   
+  validates :email, presence: true, uniqueness: true
+  
+  
+  #functions for defining who is a leader 
   def following?(leader)
     leaders.include? leader
   end
@@ -27,5 +33,10 @@ class User < ActiveRecord::Base
       leaders << leader
     end
   end
+  
+  #developing a function for listing posts made by user
+  def timeline_user_ids
+    leader_ids + [id]
+  end 
   
 end
